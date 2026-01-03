@@ -15,7 +15,7 @@
 
         header {
             background-color: #fff;
-            padding: 20px;
+            padding: 20px 20px 15px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 20px;
@@ -24,22 +24,51 @@
             z-index: 1000;
         }
 
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+
+        .header-text {
+            text-align: left;
+            flex-shrink: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            max-width: 550px;
+        }
+
         h1 {
             color: #333;
-            margin: 0 0 15px 0;
-            font-size: 2em;
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.85em;
+            margin: 2px 0 0 0;
+            font-weight: 400;
         }
 
         .search-container {
-            max-width: 500px;
-            margin: 15px auto 0;
+            flex: 1;
             position: relative;
         }
 
         .search-input {
             width: 100%;
-            padding: 12px 80px 12px 20px;
-            font-size: 15px;
+            padding: 10px 75px 10px 18px;
+            font-size: 14px;
             border: 2px solid #e0e2e5;
             border-radius: 24px;
             outline: none;
@@ -103,64 +132,126 @@
             fill: none;
         }
 
-        .filter-wrapper {
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: #ccc transparent;
-            padding: 5px 0;
+        .filter-dropdown {
+            position: relative;
         }
 
-        .filter-wrapper::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .filter-wrapper::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .filter-wrapper::-webkit-scrollbar-thumb {
-            background-color: #ccc;
-            border-radius: 3px;
-        }
-
-        .filter-wrapper::-webkit-scrollbar-thumb:hover {
-            background-color: #999;
-        }
-
-        .filter-container {
-            display: flex;
-            justify-content: flex-start;
-            flex-wrap: nowrap;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 0 20px;
-            min-width: min-content;
-        }
-
-        .filter-btn {
+        .filter-dropdown-btn {
             background-color: #f0f2f5;
-            border: 2px solid transparent;
+            border: 2px solid #e0e2e5;
             border-radius: 24px;
-            padding: 10px 20px;
+            padding: 10px 18px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             color: #333;
             white-space: nowrap;
-            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .filter-dropdown-btn:hover {
+            background-color: #e0e2e5;
+        }
+
+        .filter-dropdown-btn.active {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .filter-dropdown-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+            transition: transform 0.3s ease;
+        }
+
+        .filter-dropdown-btn.open svg {
+            transform: rotate(180deg);
+        }
+
+        .filter-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px;
+            min-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+        }
+
+        .filter-dropdown-menu.show {
+            display: block;
+            animation: fadeInDown 0.2s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-dropdown-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .filter-dropdown-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .filter-dropdown-menu::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+
+        .filter-wrapper {
+            display: none;
+        }
+
+        .filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-btn {
+            background-color: transparent;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #333;
+            white-space: nowrap;
+            text-align: left;
+            width: 100%;
         }
 
         .filter-btn:hover {
-            background-color: #e0e2e5;
+            background-color: #f0f2f5;
         }
 
         .filter-btn.active {
             background-color: #000;
             color: #fff;
-            border-color: #000;
         }
 
         .image-grid {
@@ -191,6 +282,21 @@
             width: 100%;
             height: auto;
             display: block;
+            background-color: #f0f2f5;
+            min-height: 200px;
+        }
+
+        .image-item img[data-loaded="true"] {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .image-info {
@@ -260,27 +366,37 @@
                 column-gap: 10px;
             }
             
-            .search-container {
-                max-width: 90%;
+            .header-top {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .header-text {
+                text-align: center;
+            }
+            
+            .header-controls {
+                max-width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.3em;
+            }
+            
+            .subtitle {
+                font-size: 0.8em;
             }
             
             .search-input {
-                font-size: 14px;
-                padding: 10px 75px 10px 16px;
-            }
-            
-            .filter-wrapper {
-                padding: 5px 0;
-            }
-            
-            .filter-container {
-                gap: 8px;
-                padding: 0 15px;
-            }
-            
-            .filter-btn {
-                padding: 8px 16px;
                 font-size: 13px;
+                padding: 9px 70px 9px 16px;
+            }
+            
+            .filter-dropdown-btn {
+                padding: 9px 16px;
+                font-size: 13px;
+                min-width: 90px;
             }
         }
 
@@ -292,7 +408,11 @@
             }
             
             h1 {
-                font-size: 1.5em;
+                font-size: 1.6em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
             }
             
             .image-info {
@@ -312,33 +432,53 @@
 </head>
 <body>
     <header>
-        <h1>My Image Gallery</h1>
-        <div class="search-container">
-            <input 
-                type="text" 
-                class="search-input" 
-                id="searchInput" 
-                placeholder="Search wallpapers by name..."
-                autocomplete="off"
-            >
-            <div class="search-controls">
-                <button class="clear-btn" id="clearBtn" title="Clear search">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-                <div class="search-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                    </svg>
+        <div class="header-top">
+            <div class="header-text">
+                <h1>Find Your Next Wallpaper</h1>
+                <p class="subtitle">Search, filter, download. Free.</p>
+            </div>
+            <div class="header-controls">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Search wallpapers by name..."
+                        autocomplete="off"
+                    >
+                    <div class="search-controls">
+                        <button class="clear-btn" id="clearBtn" title="Clear search">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        <div class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-dropdown">
+                    <button class="filter-dropdown-btn" id="filterDropdownBtn">
+                        <span id="filterBtnText">All</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="filter-dropdown-menu" id="filterDropdownMenu">
+                        <div class="filter-container" id="filterContainer">
+                            <!-- Filter buttons will be loaded here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="filter-wrapper">
-            <div class="filter-container" id="filterContainer">
-                <!-- Filter buttons will be loaded here -->
+            <div class="filter-container-old" id="filterContainerOld">
+                <!-- Old container, hidden now -->
             </div>
         </div>
     </header>
@@ -358,6 +498,9 @@
             const filterContainer = document.getElementById('filterContainer');
             const searchInput = document.getElementById('searchInput');
             const clearBtn = document.getElementById('clearBtn');
+            const filterDropdownBtn = document.getElementById('filterDropdownBtn');
+            const filterDropdownMenu = document.getElementById('filterDropdownMenu');
+            const filterBtnText = document.getElementById('filterBtnText');
 
             const downloadSVGIcon = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -371,6 +514,7 @@
             let allImages = [];
             let currentFilter = 'all';
             let searchQuery = '';
+            let dropdownOpen = false;
 
             function extractAllLabelsAndTables() {
                 const bloggerLabelElements = document.querySelectorAll('.blogger-labels');
@@ -423,7 +567,11 @@
                 allBtn.classList.add('filter-btn', 'active');
                 allBtn.textContent = 'All';
                 allBtn.dataset.filter = 'all';
-                allBtn.addEventListener('click', () => filterImages('all'));
+                allBtn.addEventListener('click', () => {
+                    filterImages('all');
+                    updateDropdownButton('All');
+                    toggleDropdown();
+                });
                 filterContainer.appendChild(allBtn);
                 
                 // Create buttons for each unique label
@@ -432,10 +580,36 @@
                     btn.classList.add('filter-btn');
                     btn.textContent = label;
                     btn.dataset.filter = label.toLowerCase();
-                    btn.addEventListener('click', () => filterImages(label.toLowerCase()));
+                    btn.addEventListener('click', () => {
+                        filterImages(label.toLowerCase());
+                        updateDropdownButton(label);
+                        toggleDropdown();
+                    });
                     filterContainer.appendChild(btn);
                 });
             }
+
+            function updateDropdownButton(text) {
+                filterBtnText.textContent = text;
+            }
+
+            function toggleDropdown() {
+                dropdownOpen = !dropdownOpen;
+                if (dropdownOpen) {
+                    filterDropdownMenu.classList.add('show');
+                    filterDropdownBtn.classList.add('open');
+                } else {
+                    filterDropdownMenu.classList.remove('show');
+                    filterDropdownBtn.classList.remove('open');
+                }
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.filter-dropdown') && dropdownOpen) {
+                    toggleDropdown();
+                }
+            });
 
             function extractImageData() {
                 const postData = extractAllLabelsAndTables();
@@ -476,14 +650,31 @@
                     return;
                 }
 
-                imagesToRender.forEach(image => {
+                // Use document fragment for better performance
+                const fragment = document.createDocumentFragment();
+
+                imagesToRender.forEach((image, index) => {
                     const imageItem = document.createElement('div');
                     imageItem.classList.add('image-item');
                     imageItem.dataset.labels = image.labels.join(',');
 
                     const img = document.createElement('img');
-                    img.src = image.src;
                     img.alt = image.alt;
+                    
+                    // Native lazy loading
+                    img.loading = 'lazy';
+                    
+                    // Set a placeholder or use the s320 version directly
+                    const optimizedSrc = image.src.replace(/\/s\d+\//, '/s400/');
+                    img.src = optimizedSrc;
+                    
+                    // Store full quality URL for download
+                    img.dataset.fullSrc = image.src;
+                    
+                    // Mark as loaded when image loads
+                    img.addEventListener('load', function() {
+                        this.dataset.loaded = 'true';
+                    }, { once: true });
 
                     const imageInfo = document.createElement('div');
                     imageInfo.classList.add('image-info');
@@ -502,8 +693,11 @@
 
                     imageItem.appendChild(img);
                     imageItem.appendChild(imageInfo);
-                    imageGrid.appendChild(imageItem);
+                    fragment.appendChild(imageItem);
                 });
+
+                // Append all at once for better performance
+                imageGrid.appendChild(fragment);
 
                 console.log(`Rendered ${imagesToRender.length} images`);
             }
@@ -572,6 +766,12 @@
                 
                 // Add clear button event listener
                 clearBtn.addEventListener('click', clearSearch);
+                
+                // Add dropdown toggle listener
+                filterDropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleDropdown();
+                });
             }
 
             init();
