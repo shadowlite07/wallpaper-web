@@ -4,7 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pinterest-like Gallery</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* --- CSS Starts Here --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .image-grid {
+            column-count: 4;
+            column-gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .image-item {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-info {
+            padding: 12px 15px;
+            font-size: 14px;
+            color: #555;
+            background-color: #ffffff;
+            text-align: left;
+            font-weight: 600;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .download-button {
+            /* background-color: #007bff; */
+            color: #000; /* This will be the default stroke color for our SVG */
+            border: none;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .download-button:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .download-button svg {
+            width: 18px; /* Match desired size */
+            height: 18px;
+            stroke: currentColor; /* Inherit color from parent (.download-button) */
+            stroke-width: 2.5; /* Match visual weight */
+            fill: none; /* No fill for a line icon */
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: block; /* Ensure no extra space around SVG */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .image-grid {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .image-grid {
+                column-count: 2;
+                padding: 15px;
+                column-gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-grid {
+                column-count: 1;
+                padding: 10px;
+                column-gap: 5px;
+            }
+            .image-info {
+                font-size: 13px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .download-button {
+                width: auto;
+                padding: 6px;
+            }
+            .download-button svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        /* --- CSS Ends Here --- */
+    </style>
 </head>
 <body>
     <header>
@@ -13,6 +146,80 @@
     <main class="image-grid" id="imageGrid">
         <!-- Images will be loaded here by JavaScript -->
     </main>
-    <script src="script.js"></script>
+
+    <script>
+        /* --- JavaScript Starts Here --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageGrid = document.getElementById('imageGrid');
+
+            const images = [
+                { src: 'https://picsum.photos/id/1015/400/600', alt: 'Forest Path' },
+                { src: 'https://picsum.photos/id/10/600/400', alt: 'Mountain Landscape' },
+                { src: 'https://picsum.photos/id/100/500/700', alt: 'City at Night' },
+                { src: 'https://picsum.photos/id/1003/400/500', alt: 'Desert Road' },
+                { src: 'https://picsum.photos/id/1018/600/800', alt: 'Lake View' },
+                { src: 'https://picsum.photos/id/1020/500/300', alt: 'Abstract Art' },
+                { src: 'https://picsum.photos/id/1025/400/400', alt: 'Cute Puppy' },
+                { src: 'https://picsum.photos/id/103/700/500', alt: 'Coffee Cup' },
+                { src: 'https://picsum.photos/id/1036/400/600', alt: 'Ocean Waves' },
+                { src: 'https://picsum.photos/id/1039/500/700', alt: 'Winter Scene' },
+                { src: 'https://picsum.photos/id/1040/600/400', alt: 'Building Facade' },
+                { src: 'https://picsum.photos/id/1041/400/500', alt: 'Greenery' },
+                { src: 'https://picsum.photos/id/1042/500/600', alt: 'Bridge at Sunset' },
+                { src: 'https://picsum.photos/id/1043/400/300', alt: 'Street Art' },
+                { src: 'https://picsum.photos/id/1044/600/700', alt: 'Book Stack' },
+                { src: 'https://picsum.photos/id/1047/500/400', alt: 'Nature Trail' },
+                { src: 'https://picsum.photos/id/1050/300/450', alt: 'Skyline' },
+                { src: 'https://picsum.photos/id/1051/450/300', alt: 'Road' },
+                { src: 'https://picsum.photos/id/1052/350/500', alt: 'Flowers' },
+                { src: 'https://picsum.photos/id/1053/500/350', alt: 'Birds' },
+                { src: 'https://picsum.photos/id/1054/400/550', alt: 'Waterfall' },
+            ];
+
+            // Define the SVG icon as a string
+            const downloadSVGIcon = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 16L12 8" />
+                    <path d="M12 16L16 12" />
+                    <path d="M12 16L8 12" />
+                    <path d="M4 20L20 20" />
+                </svg>
+            `;
+
+            function renderImages() {
+                images.forEach(image => {
+                    const imageItem = document.createElement('div');
+                    imageItem.classList.add('image-item');
+
+                    const img = document.createElement('img');
+                    img.src = image.src;
+                    img.alt = image.alt;
+
+                    const imageInfo = document.createElement('div');
+                    imageInfo.classList.add('image-info');
+
+                    const imageNameSpan = document.createElement('span');
+                    imageNameSpan.textContent = image.alt;
+
+                    const downloadButton = document.createElement('a');
+                    downloadButton.href = image.src;
+                    downloadButton.download = `${image.alt.replace(/\s+/g, '-')}.jpg`;
+                    downloadButton.classList.add('download-button');
+
+                    downloadButton.innerHTML = downloadSVGIcon;
+
+                    imageInfo.appendChild(imageNameSpan);
+                    imageInfo.appendChild(downloadButton);
+
+                    imageItem.appendChild(img);
+                    imageItem.appendChild(imageInfo);
+                    imageGrid.appendChild(imageItem);
+                });
+            }
+
+            renderImages();
+        });
+        /* --- JavaScript Ends Here --- */
+    </script>
 </body>
 </html>
