@@ -38,7 +38,7 @@
 
         .search-input {
             width: 100%;
-            padding: 12px 45px 12px 20px;
+            padding: 12px 80px 12px 20px;
             font-size: 15px;
             border: 2px solid #e0e2e5;
             border-radius: 24px;
@@ -51,11 +51,45 @@
             border-color: #000;
         }
 
-        .search-icon {
+        .search-controls {
             position: absolute;
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .clear-btn:hover {
+            opacity: 1;
+        }
+
+        .clear-btn.visible {
+            display: flex;
+        }
+
+        .clear-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: #666;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        .search-icon {
             width: 20px;
             height: 20px;
             pointer-events: none;
@@ -69,12 +103,40 @@
             fill: none;
         }
 
+        .filter-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+            padding: 5px 0;
+        }
+
+        .filter-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .filter-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .filter-wrapper::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+
+        .filter-wrapper::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+        }
+
         .filter-container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: flex-start;
+            flex-wrap: nowrap;
             gap: 10px;
             margin-top: 15px;
+            padding: 0 20px;
+            min-width: min-content;
         }
 
         .filter-btn {
@@ -87,6 +149,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             color: #333;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .filter-btn:hover {
@@ -202,11 +266,16 @@
             
             .search-input {
                 font-size: 14px;
-                padding: 10px 40px 10px 16px;
+                padding: 10px 75px 10px 16px;
+            }
+            
+            .filter-wrapper {
+                padding: 5px 0;
             }
             
             .filter-container {
                 gap: 8px;
+                padding: 0 15px;
             }
             
             .filter-btn {
@@ -252,15 +321,25 @@
                 placeholder="Search wallpapers by name..."
                 autocomplete="off"
             >
-            <div class="search-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
+            <div class="search-controls">
+                <button class="clear-btn" id="clearBtn" title="Clear search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
             </div>
         </div>
-        <div class="filter-container" id="filterContainer">
-            <!-- Filter buttons will be loaded here -->
+        <div class="filter-wrapper">
+            <div class="filter-container" id="filterContainer">
+                <!-- Filter buttons will be loaded here -->
+            </div>
         </div>
     </header>
     
@@ -278,6 +357,7 @@
             const imageGrid = document.getElementById('imageGrid');
             const filterContainer = document.getElementById('filterContainer');
             const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearBtn');
 
             const downloadSVGIcon = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -464,6 +544,21 @@
 
             function handleSearch(e) {
                 searchQuery = e.target.value;
+                
+                // Toggle clear button visibility
+                if (searchQuery.trim() !== '') {
+                    clearBtn.classList.add('visible');
+                } else {
+                    clearBtn.classList.remove('visible');
+                }
+                
+                applyFilters();
+            }
+
+            function clearSearch() {
+                searchInput.value = '';
+                searchQuery = '';
+                clearBtn.classList.remove('visible');
                 applyFilters();
             }
 
@@ -474,6 +569,9 @@
                 
                 // Add search event listener
                 searchInput.addEventListener('input', handleSearch);
+                
+                // Add clear button event listener
+                clearBtn.addEventListener('click', clearSearch);
             }
 
             init();
