@@ -30,6 +30,45 @@
             font-size: 2em;
         }
 
+        .search-container {
+            max-width: 500px;
+            margin: 15px auto 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            font-size: 15px;
+            border: 2px solid #e0e2e5;
+            border-radius: 24px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            border-color: #000;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .search-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: #666;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
         .filter-container {
             display: flex;
             justify-content: center;
@@ -157,6 +196,15 @@
                 column-gap: 10px;
             }
             
+            .search-container {
+                max-width: 90%;
+            }
+            
+            .search-input {
+                font-size: 14px;
+                padding: 10px 40px 10px 16px;
+            }
+            
             .filter-container {
                 gap: 8px;
             }
@@ -196,6 +244,21 @@
 <body>
     <header>
         <h1>My Image Gallery</h1>
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="Search wallpapers by name..."
+                autocomplete="off"
+            >
+            <div class="search-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+        </div>
         <div class="filter-container" id="filterContainer">
             <!-- Filter buttons will be loaded here -->
         </div>
@@ -214,6 +277,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const imageGrid = document.getElementById('imageGrid');
             const filterContainer = document.getElementById('filterContainer');
+            const searchInput = document.getElementById('searchInput');
 
             const downloadSVGIcon = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -226,6 +290,7 @@
 
             let allImages = [];
             let currentFilter = 'all';
+            let searchQuery = '';
 
             function extractAllLabelsAndTables() {
                 const bloggerLabelElements = document.querySelectorAll('.blogger-labels');
@@ -374,21 +439,41 @@
                     }
                 });
 
-                // Filter and render images
-                if (filter === 'all') {
-                    renderImages(allImages);
-                } else {
-                    const filtered = allImages.filter(img => 
-                        img.labels.includes(filter)
+                applyFilters();
+            }
+
+            function applyFilters() {
+                let filtered = allImages;
+
+                // Apply category filter
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(img => 
+                        img.labels.includes(currentFilter)
                     );
-                    renderImages(filtered);
                 }
+
+                // Apply search filter
+                if (searchQuery.trim() !== '') {
+                    filtered = filtered.filter(img =>
+                        img.alt.toLowerCase().includes(searchQuery.toLowerCase())
+                    );
+                }
+
+                renderImages(filtered);
+            }
+
+            function handleSearch(e) {
+                searchQuery = e.target.value;
+                applyFilters();
             }
 
             function init() {
                 allImages = extractImageData();
                 createFilterButtons();
                 renderImages(allImages);
+                
+                // Add search event listener
+                searchInput.addEventListener('input', handleSearch);
             }
 
             init();
