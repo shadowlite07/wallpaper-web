@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wallory: The Art Gallery</title>
-
     
     <style>
+        /* Force hide Blogger's mobile template elements */
+        body.mobile, .mobile-view, .mobile-index-contents, 
+        body > .mobile, .blog-mobile-title, .mobile-link-button {
+            display: none !important;
+        }
+        
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -403,21 +408,22 @@
 
         @media (max-width: 480px) {
             .image-grid {
-                column-count: 1;
+                column-count: 2;
                 padding: 10px;
-                column-gap: 5px;
+                column-gap: 8px;
             }
             
             h1 {
-                font-size: 1.6em;
+                font-size: 1.2em;
             }
             
             .subtitle {
-                font-size: 0.9em;
+                font-size: 0.75em;
             }
             
             .image-info {
                 font-size: 13px;
+                padding: 10px 12px;
             }
             
             .download-button {
@@ -427,6 +433,10 @@
             .download-button svg {
                 width: 16px;
                 height: 16px;
+            }
+            
+            header {
+                padding: 15px 10px 12px;
             }
         }
     </style>
@@ -477,11 +487,6 @@
                 </div>
             </div>
         </div>
-        <div class="filter-wrapper">
-            <div class="filter-container-old" id="filterContainerOld">
-                <!-- Old container, hidden now -->
-            </div>
-        </div>
     </header>
     
     <!-- Hidden database table and labels fetched from Blogger post -->
@@ -523,7 +528,6 @@
                 
                 const postData = [];
                 
-                // Match each table with its corresponding labels
                 bloggerLabelElements.forEach((labelElement, index) => {
                     const labels = [];
                     const labelLinks = labelElement.querySelectorAll('a[rel="tag"]');
@@ -535,7 +539,6 @@
                         }
                     });
                     
-                    // Find corresponding table (assuming same order)
                     if (allTables[index]) {
                         postData.push({
                             table: allTables[index],
@@ -563,7 +566,6 @@
             function createFilterButtons() {
                 const labels = extractAllUniqueLabels();
                 
-                // Create "All" button
                 const allBtn = document.createElement('button');
                 allBtn.classList.add('filter-btn', 'active');
                 allBtn.textContent = 'All';
@@ -575,7 +577,6 @@
                 });
                 filterContainer.appendChild(allBtn);
                 
-                // Create buttons for each unique label
                 labels.forEach(label => {
                     const btn = document.createElement('button');
                     btn.classList.add('filter-btn');
@@ -605,7 +606,6 @@
                 }
             }
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.filter-dropdown') && dropdownOpen) {
                     toggleDropdown();
@@ -651,28 +651,19 @@
                     return;
                 }
 
-                // Use document fragment for better performance
                 const fragment = document.createDocumentFragment();
 
-                imagesToRender.forEach((image, index) => {
+                imagesToRender.forEach((image) => {
                     const imageItem = document.createElement('div');
                     imageItem.classList.add('image-item');
-                    imageItem.dataset.labels = image.labels.join(',');
 
                     const img = document.createElement('img');
                     img.alt = image.alt;
-                    
-                    // Native lazy loading
                     img.loading = 'lazy';
                     
-                    // Set a placeholder or use the s320 version directly
                     const optimizedSrc = image.src.replace(/\/s\d+\//, '/s400/');
                     img.src = optimizedSrc;
                     
-                    // Store full quality URL for download
-                    img.dataset.fullSrc = image.src;
-                    
-                    // Mark as loaded when image loads
                     img.addEventListener('load', function() {
                         this.dataset.loaded = 'true';
                     }, { once: true });
@@ -697,16 +688,13 @@
                     fragment.appendChild(imageItem);
                 });
 
-                // Append all at once for better performance
                 imageGrid.appendChild(fragment);
-
                 console.log(`Rendered ${imagesToRender.length} images`);
             }
 
             function filterImages(filter) {
                 currentFilter = filter;
                 
-                // Update active button
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.classList.remove('active');
                     if (btn.dataset.filter === filter) {
@@ -720,14 +708,12 @@
             function applyFilters() {
                 let filtered = allImages;
 
-                // Apply category filter
                 if (currentFilter !== 'all') {
                     filtered = filtered.filter(img => 
                         img.labels.includes(currentFilter)
                     );
                 }
 
-                // Apply search filter
                 if (searchQuery.trim() !== '') {
                     filtered = filtered.filter(img =>
                         img.alt.toLowerCase().includes(searchQuery.toLowerCase())
@@ -740,7 +726,6 @@
             function handleSearch(e) {
                 searchQuery = e.target.value;
                 
-                // Toggle clear button visibility
                 if (searchQuery.trim() !== '') {
                     clearBtn.classList.add('visible');
                 } else {
@@ -762,13 +747,8 @@
                 createFilterButtons();
                 renderImages(allImages);
                 
-                // Add search event listener
                 searchInput.addEventListener('input', handleSearch);
-                
-                // Add clear button event listener
                 clearBtn.addEventListener('click', clearSearch);
-                
-                // Add dropdown toggle listener
                 filterDropdownBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     toggleDropdown();
